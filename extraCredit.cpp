@@ -10,6 +10,7 @@ Program Description: Simple text based RPG game where the goal is to slay the
 #include <unordered_map>
 #include <chrono>
 #include <thread>
+#include <fstream>
 #include "player.h"
 #include "enemy.h"
 using namespace std;
@@ -32,12 +33,25 @@ unordered_map<std::string, std::string>  MESSAGES = {
 
 void typeLikeUser(string);
 void wait(int);
+void readFile(string);
+
+void readFile(string filePath) {
+  string line;
+  ifstream introFile(filePath);
+  if(introFile.is_open()) {
+    while(getline(introFile, line)) {
+      typeLikeUser(line);
+      cout << endl;
+    }
+    introFile.close();
+  }
+  else cout << "unable to open file\n";
+}
 
 int main() {
   string holder; // string for holding things up
-  string testMessage = "Hello John!  I am learning to type things out!\nIsn't that the coolest thing that you've ever seen?!\nNo, you're right, probably not.  But you knwo what?  I don't care!\nThis shit is gonna get me an A!!";
-  typeLikeUser(testMessage);
   Player me(10);
+  readFile("text_assets/intro.txt");
   // main game loop
   while(!me.isDead()) {
     // battle loop
@@ -56,12 +70,22 @@ void wait(int duration) {
 }
 
 void typeLikeUser(string message) {
+  /*
+  cout to stdio in a janky, typing way, like someone is inputing info
+  requires trailing whitespace on line ends to pause correctly
+  */
+  char lastChar;
+  const int LOWER_MILLI_RANGE = 25;
+  const int UPPER_MILLI_RANGE = 75;
   for(char c : message) {
-    int dur = rand() % 100;
-    bool longWait = (c == '\n');
+    int dur = rand() % UPPER_MILLI_RANGE + LOWER_MILLI_RANGE;
+    bool longWait = (lastChar == '.');
+    bool pauseWait = (lastChar == ',');
     cout << c;
     if (longWait) dur = 750;
+    else if (pauseWait) dur = 450;
     wait(dur);
     cout.flush();
+    lastChar = c;
   }
 }
