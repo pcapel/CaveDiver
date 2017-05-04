@@ -3,7 +3,8 @@ Program Name: Cave Diver
 Program Description: Simple text based RPG game where the goal is to slay the
                      dragon at the bottom of the cave.  No one ever accused me
                      of being creative...
-
+Author: Philip Capel
+Date: Sometime between the beginning of May and whenever you're reading this
 */
 #include <iostream>
 #include <string>
@@ -11,16 +12,17 @@ Program Description: Simple text based RPG game where the goal is to slay the
 #include <chrono>
 #include <thread>
 #include <fstream>
-#include "player.h"
-#include "enemy.h"
+#include "characters/player.h"
+#include "characters/enemy.h"
 using namespace std;
 
 
 unordered_map<std::string, std::string>  DESCRIPTIONS = {
   {"Goblin", "Grotesque creatures known to frequent caves and dark, moist places.\n"},
-  {"Bear", ""},
-  {"Hob-Goblin", ""},
-  {"Demon", ""},
+  {"Bear", "Burly beasts with claws sharpened by their lumbering motion. They hunger for flesh.\n"},
+  {"Hob-Goblin", "A larger, meaner, and somehow smellier version of the Goblin.\n"},
+  {"Demon", "Fearsome demi-gods from the depths of the Earth. Their rage against humanity burns like the Sun."},
+  {"Behemaht", "The Dragon of the Depths.  Behemaht is the evil that feeds the cavern and attracts the creatures within."},
 };
 
 unordered_map<std::string, std::string>  MESSAGES = {
@@ -34,24 +36,27 @@ unordered_map<std::string, std::string>  MESSAGES = {
 void typeLikeUser(string);
 void wait(int);
 void readFile(string);
+void readString(string);
+bool checkQuit(string);
 
-void readFile(string filePath) {
-  string line;
-  ifstream introFile(filePath);
-  if(introFile.is_open()) {
-    while(getline(introFile, line)) {
-      typeLikeUser(line);
-      cout << endl;
-    }
-    introFile.close();
-  }
-  else cout << "unable to open file\n";
-}
+/*
+Mockups of textfiles that I would have passed to readFile
+*/
+
+const string INTRO = "";
 
 int main() {
   string holder; // string for holding things up
   Player me(10);
-  readFile("text_assets/intro.txt");
+  try
+  {
+    readFile("text_assets/intro.txt");
+  } catch(int e)
+  {
+    if (e == 25) {
+      readString(INTRO);
+    }
+  }
   // main game loop
   while(!me.isDead()) {
     // battle loop
@@ -63,6 +68,29 @@ int main() {
   cin >> holder;
   return 0;
 }
+
+
+/*
+reads out a file using the typeLikeUser function
+or throws error 25 if file not found/can't be opened
+*/
+void readFile(string filePath) {
+  string line;
+  ifstream introFile(filePath);
+  if(introFile.is_open()) {
+    while(getline(introFile, line)) {
+      typeLikeUser(line);
+      cout << endl;
+    }
+    introFile.close();
+  } else throw 25;
+}
+
+void readString(string content) {
+    typeLikeUser(content);
+    cout << endl;
+}
+
 
 void wait(int duration) {
   chrono::milliseconds dura(duration);
