@@ -12,10 +12,15 @@ Date: Sometime between the beginning of May and whenever you're reading this
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include <cstdlib>
+#include <vector>
 #include "characters/player.h"
 #include "characters/enemy.h"
+#include "state/map.h"
 using namespace std;
 
+const string CLEAR_COMMAND = "clear";
+const bool SPEED_OVERRIDE = false;
 
 unordered_map<std::string, std::string>  DESCRIPTIONS = {
   {"Goblin", "Grotesque creatures known to frequent caves and dark, moist places.\n"},
@@ -33,11 +38,24 @@ unordered_map<std::string, std::string>  MESSAGES = {
   {"rest", "You have rested, and feel considerably better!"},
 };
 
+const int NON_BATTLE_MENU_SIZE = 6;
+const string NON_BATTLE_MENU[] = {
+  "Move Forward, deeper into the cave.",
+  "Move backwards, away from your goal, and to safety.",
+  "Take the path to your right.",
+  "Take the path to your left.",
+  "Rest your bones for a moment.",
+  "Quit your quest.",
+};
+
 void typeLikeUser(string);
 void wait(int);
 void readFile(string);
 void readString(string);
 bool checkQuit(string);
+
+void playIntro();
+void printMenu(const string*, int);
 
 /*
 Mockups of textfiles that I would have passed to readFile
@@ -45,30 +63,123 @@ Mockups of textfiles that I would have passed to readFile
 
 const string INTRO = "";
 
-int main() {
+int main(int argc, char *argv[], char *envp[]) {
   string holder; // string for holding things up
-  Player me(10);
-  try
-  {
-    readFile("text_assets/intro.txt");
-  } catch(int e)
-  {
-    if (e == 25) {
-      readString(INTRO);
-    }
-  }
+  char userAction; // get you some actions
+  // from Actor class
+  // xpos, ypos, level, health, strength, evasion, attack_type, evasion_fraction
+  // player specific
+  // depth
+  // xpos for depth 0 = 49
+  // ypos for depth 0 = 13
+  Player Me(49,13,1,10,10,4,1,0.13,0);
+  vector<Actor*> actorVector;
+  actorVector.push_back(&Me);
+  Map cavern;
+  cavern.clear(CLEAR_COMMAND);
+  cout << "For the best gameplay experience\n"
+            "please be sure to set your viewport\n"
+             "to at least 80 Columns by 40 Lines.\n"
+             "Enjoy!\n"
+             "Phil\n\n\n"
+             "Enter to continue...";
+  cin.ignore();
+  getline(cin,holder);
+  cavern.clear(CLEAR_COMMAND);
+  playIntro();
   // main game loop
-  while(!me.isDead()) {
+  while(!Me.isDead()) {
+    cout << Me.getXPos() << " " << Me.getYPos() << endl;
+    // instantiation of enemies dependant on the current level of the player
+    switch (Me.getDepth()) {
+      // instantiation call signature for enemies type
+      // from Actor class
+      // xpos, ypos, level, health, strength, evasion, attack_type, evasion_fraction
+      // enemy specific
+      // name, description, attack_type(not supported)
+      case 0: // beginning of game, no enemies
+        break;
+      case 1: {
+        Enemy currentEnemy(40,5,1,4,2,2,1,0.1, "Goob", "A goober"); // test enemy
+        actorVector.push_back(&currentEnemy);
+        break;
+      }
+      case 2:
+        //fill
+        break;
+      case 3:
+        //fill
+        break;
+      case 4:
+        //boss
+        break;
+      default:
+        cout << "How on earth did you get this?\n";
+        cout << "You've found a bug.  Please email me.\n";
+        break;
+      }
+
+    cavern.render(Me.getDepth(), actorVector);
+    cin >> userAction;
+
+    Me.move(userAction);
+
+    // set up random movement
+    srand(time(NULL));
+    // test for enemies
+    cout << "preloop, vector size: " << actorVector.size() << endl;
+    for (int i = 1; i < actorVector.size(); i++) {
+      Actor *e = actorVector[i];
+      char moves[] = {'w','a','s','d'};
+      char randMove = moves[(rand() % 4)];
+      e->move(randMove);
+      cout << "e x:y | " << e->getXPos() << " : " << e->getYPos() << endl;
+    }
     // battle loop
-    while(me.inBattle) {
+    while(Me.inBattle) {
 
     }
-    cin >> holder;
+    cavern.clear(CLEAR_COMMAND, true);
   }
   cin >> holder;
   return 0;
 }
 
+void printMenu(const string *menu, int menuSize) {
+  cout << "Current action choices are:\n";
+  for(int i = 0; i < menuSize; i++) {
+    cout << i << ": " << menu[i] << endl;
+  }
+}
+
+void playIntro() {
+  char uin;
+  string cont;
+  system(CLEAR_COMMAND.c_str());
+  cout << "Would you like to skip the intro y or n?\n>";
+  cin >> uin;
+  system(CLEAR_COMMAND.c_str());
+  while(!(uin == 'y') && !(uin == 'n')) {
+    cout << "You must enter y or n\n>";
+    cin >> uin;
+    system(CLEAR_COMMAND.c_str());
+  }
+  if(uin == 'n') {
+    try
+    {
+      readFile("text_assets/intro.txt");
+    } catch(int e)
+    {
+      if (e == 25) {
+        readString(INTRO);
+      }
+    }
+    cout << "\nEnter to continue...\n";
+    cin.ignore();
+    getline(cin,cont);
+    system(CLEAR_COMMAND.c_str());
+  }
+}
 
 /*
 reads out a file using the typeLikeUser function
@@ -103,17 +214,17 @@ void typeLikeUser(string message) {
   requires trailing whitespace on line ends to pause correctly
   */
   char lastChar;
-  const int LOWER_MILLI_RANGE = 25;
-  const int UPPER_MILLI_RANGE = 75;
-  for(char c : message) {
-    int dur = rand() % UPPER_MILLI_RANGE + LOWER_MILLI_RANGE;
-    bool longWait = (lastChar == '.');
-    bool pauseWait = (lastChar == ',');
-    cout << c;
-    if (longWait) dur = 750;
-    else if (pauseWait) dur = 450;
-    wait(dur);
-    cout.flush();
-    lastChar = c;
+    const int LOWER_MILLI_RANGE = SPEED_OVERRIDE ? 1 : 25;
+    const int UPPER_MILLI_RANGE = SPEED_OVERRIDE ? 1 : 75;
+    for(char c : message) {
+      int dur = rand() % UPPER_MILLI_RANGE + LOWER_MILLI_RANGE;
+      bool longWait = (lastChar == '.');
+      bool pauseWait = (lastChar == ',');
+      cout << c;
+      if (longWait) dur = SPEED_OVERRIDE ? 1 : 750;
+      else if (pauseWait) dur = SPEED_OVERRIDE ? 1 : 450;
+      wait(dur);
+      cout.flush();
+      lastChar = c;
   }
 }

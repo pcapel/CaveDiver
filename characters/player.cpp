@@ -1,40 +1,42 @@
-#include "player.h"
 #include <iostream>
 #include <string>
+#include "player.h"
+#include "actor.h"
 using namespace std;
 
-Player::Player(int hp) {
-  health = hp;
+const int w = 119;
+const int a = 97;
+const int s = 115;
+const int d = 100;
+
+Player::Player(
+  int x,
+  int y,
+  int lvl,
+  int hp,
+  int str,
+  int eva,
+  int atkT,
+  double eva_f,
+  int depth) : Actor(x, y, lvl, hp, str, eva, atkT, eva_f) {
+    this->depth = depth;
 }
 
-void Player::takeDamage(int attack, string damage_type) {
-  int modifier = 0;
-  const string types[3] = {"physical","magical","psychic"};
-  int i;
-  for(i = 0; i < 3; i++) {
-    if (damage_type.compare(types[i]) == 0) break;
+int Player::getDepth() {
+  return depth;
+}
+
+void Player::toggleGod() {
+  isGod = !isGod;
+}
+
+void Player::toggleSuperStrong() {
+  isSuper = !isSuper;
+}
+
+void Player::move(char d) {
+  Actor::move(d);
+  if (prevY == 1 && d == w) {
+    depth += 1;
   }
-  switch (i) {
-    case 0: // modifications are modulated based on attack type
-      setHealth(health - attack);
-      break;
-  }
-  if(health < 0) die();
-}
-
-void Player::die() {
-  dead = 1;
-}
-
-bool Player::isDead() {
-  return dead;
-}
-
-int Player::getHealth() {
-  return health;
-}
-
-void Player::setHealth(int health) {
-  this->health = health;
-  return ;
 }

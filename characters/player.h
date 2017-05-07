@@ -1,17 +1,23 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <string>
+#include "actor.h"
 
-class Player {
-  bool dead = false;
+class Player: public Actor {
+  bool isGod = false;
+  bool isSuper = false;
+  int depth = 0;
 public:
   bool inBattle = false;
-  int health;
-  Player(int);
-  void takeDamage(int, std::string);
-  void die();
-  bool isDead();
-  int getHealth();
-  void setHealth(int);
+  // from Actor class
+  // xpos, ypos, level, health, strength, evasion, attack_type, evasion_fraction
+  // player specific
+  // depth
+  Player(int, int, int, int, int, int, int, double, int);
+  int getDepth();
+
+  void toggleGod();
+  void toggleSuperStrong();
+  void move(char);
 };
 #endif

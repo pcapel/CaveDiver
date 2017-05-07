@@ -2,22 +2,21 @@
 #define ENEMY_H
 
 #include <string>
-#include "player.h"
+#include "actor.h"
 using namespace std;
 
-class Enemy {
-  int level, health, evasion;
-  int stats[4];
-  double evasion_fraction;
+class Enemy: public Actor {
   string name;
   string description;
   string attack_type;
 public:
-  int strength;
-  Enemy(int, int, int, int, double, string, string, string);
+  // from Actor class
+  // xpos, ypos, level, health, strength, evasion, attack_type, evasion_fraction
+  // enemy specific
+  // name, description
+  Enemy(int, int, int, int, int, int, int, double, string, string);
+
   string getName();
   string getDescription();
-  int* getStats();
-  void attack(Player&);
 };
 #endif
