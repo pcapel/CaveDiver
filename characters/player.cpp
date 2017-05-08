@@ -38,5 +38,15 @@ void Player::move(char d) {
   Actor::move(d);
   if (prevY == 1 && d == w) {
     depth += 1;
+  } else if(prevY == 38 && d == s) {
+    depth -= 1;
   }
+}
+
+bool Player::battleStatus() {
+  return inBattle;
+}
+
+void Player::toggleInBattle() {
+  inBattle = !inBattle;
 }

@@ -16,7 +16,9 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
   upper left hand corner.  The list of actorptrs contains player as well
   player actor should always be in position 0
   */
-  static int from = 0;
+  static int from = 0; 
+  static bool left = 0;
+  static bool right = 0;
 
   Actor *player = actorptrs[0];
 
@@ -24,9 +26,11 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
   int schemaLength;
   switch(playerDepth) {
     case 0: {
+      cout << DEPTH_0_ROOM_NAME << endl;
       schema = DEPTH_0;
       schemaLength = DEPTH_0_LENGTH;
       if (from == 1) {
+        cout << "attempting to exit the cave\n";
         player->setXPos(DEPTH_0_NORTHERN_X);
         player->setYPos(DEPTH_0_NORTHERN_Y);
         player->setPrevX(DEPTH_0_NORTHERN_X);
@@ -36,6 +40,7 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
       break;
     }
     case 1:{
+      cout << DEPTH_1_ROOM_NAME << endl;
       schema = DEPTH_1;
       schemaLength = DEPTH_1_LENGTH;
       if (from == 0) {
@@ -53,9 +58,58 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
       break;
     }
     case 2: {
+      cout << DEPTH_2_ROOM_NAME << endl;
       schema = DEPTH_2;
       schemaLength = DEPTH_2_LENGTH;
+      if (from == 1) {
+        player->setXPos(DEPTH_2_SOUTHERN_X);
+        player->setYPos(DEPTH_2_SOUTHERN_Y);
+        player->setPrevX(DEPTH_2_SOUTHERN_X);
+        player->setPrevY(DEPTH_2_SOUTHERN_Y);
+      } else if (from == 3 && left) {
+        player->setXPos(DEPTH_2_NORTHERN_X_L);
+        player->setYPos(DEPTH_2_NORTHERN_Y_L);
+        player->setPrevX(DEPTH_2_NORTHERN_X_L);
+        player->setPrevY(DEPTH_2_NORTHERN_Y_L);
+      } else if (from == 3 && right){
+        player->setXPos(DEPTH_2_NORTHERN_X_R);
+        player->setYPos(DEPTH_2_NORTHERN_Y_R);
+        player->setPrevX(DEPTH_2_NORTHERN_X_R);
+        player->setPrevY(DEPTH_2_NORTHERN_Y_R);
+      }
       from = 2;
+      break;
+    }
+    case 3: {
+      if(from == 2){
+        left = (player->getXPos() < DEPTH_2_EXIT_L);
+        right  = (player->getXPos() > DEPTH_2_EXIT_R);
+      }
+      if (left) {
+        cout << DEPTH_3_ROOM_NAME_L << endl;
+        schema = DEPTH_3_L;
+        schemaLength = DEPTH_3_LENGTH_L;
+        if(from == 2){
+          player->setXPos(DEPTH_3_SOUTHERN_X_L);
+          player->setYPos(DEPTH_3_SOUTHERN_Y_L);
+          player->setPrevX(DEPTH_3_SOUTHERN_X_L);
+          player->setPrevY(DEPTH_3_SOUTHERN_Y_L);
+        }
+      } else if (right) {
+        cout << DEPTH_3_ROOM_NAME_R << endl;
+        schema = DEPTH_3_R;
+        schemaLength = DEPTH_3_LENGTH_R;
+        if(from == 2){
+          player->setXPos(DEPTH_3_SOUTHERN_X_R);
+          player->setYPos(DEPTH_3_SOUTHERN_Y_R);
+          player->setPrevX(DEPTH_3_SOUTHERN_X_R);
+          player->setPrevY(DEPTH_3_SOUTHERN_Y_R);
+        }
+      }
+      from = 3;
+      break;
+    }
+    case 4: {
       break;
     }
     default:
@@ -63,6 +117,7 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
       cout << "You broke my game :'(\n";
       break;
   }
+  cout << "entering check loop\n";
   for(int i = 0; i < schemaLength; i++) {
     /*
     I should call this out as a function that takes in the positions of
@@ -144,7 +199,12 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
   }
 }
 
-void renderBattle() {
+void renderBattle(/*Player and enemy instances*/) {
+  /*
+  Takes the player and enemy instances involved in a kerfuffle and uses their
+  stats to output the visualiztion of the battle menu.
+  */
+  enum Options { attack = 1, item, magic, flee };
 
 }
 

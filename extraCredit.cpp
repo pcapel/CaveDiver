@@ -98,19 +98,35 @@ int main(int argc, char *argv[], char *envp[]) {
       // enemy specific
       // name, description, attack_type(not supported)
       case 0: // beginning of game, no enemies
+        for (int m = 1; m < actorVector.size(); m++) {
+          actorVector.erase(actorVector.begin() + m);
+        }
         break;
       case 1: {
+        for (int m = 1; m < actorVector.size(); m++) {
+          actorVector.erase(actorVector.begin() + m);
+        }
         Enemy currentEnemy(40,5,1,4,2,2,1,0.1, "Goob", "A goober"); // test enemy
         actorVector.push_back(&currentEnemy);
         break;
       }
       case 2:
+        for (int m = 1; m < actorVector.size(); m++) {
+          actorVector.erase(actorVector.begin() + m);
+        }
+
         //fill
         break;
       case 3:
+        for (int m = 1; m < actorVector.size(); m++) {
+          actorVector.erase(actorVector.begin() + m);
+        }
         //fill
         break;
       case 4:
+        for (int m = 1; m < actorVector.size(); m++) {
+          actorVector.erase(actorVector.begin() + m);
+        }
         //boss
         break;
       default:
@@ -124,22 +140,31 @@ int main(int argc, char *argv[], char *envp[]) {
 
     Me.move(userAction);
 
-    // set up random movement
-    srand(time(NULL));
-    // test for enemies
-    cout << "preloop, vector size: " << actorVector.size() << endl;
-    for (int i = 1; i < actorVector.size(); i++) {
-      Actor *e = actorVector[i];
-      char moves[] = {'w','a','s','d'};
-      char randMove = moves[(rand() % 4)];
-      e->move(randMove);
-      cout << "e x:y | " << e->getXPos() << " : " << e->getYPos() << endl;
+    // // set up random movement
+    // srand(time(NULL));
+    // // test for enemies
+    // for (int i = 1; i < actorVector.size(); i++) {
+    //   Actor *e = actorVector[i];
+    //   char moves[] = {'w','a','s','d'};
+    //   char randMove = moves[(rand() % 4)];
+    //   e->move(randMove);
+    // }
+
+    // battle check
+    int battleIndex = 1;
+    for (;battleIndex < actorVector.size(); battleIndex++) {
+      if (Me.getXPos() == actorVector[battleIndex]->getXPos()
+          && Me.getYPos() == actorVector[battleIndex]->getYPos())
+          Me.toggleInBattle();
     }
     // battle loop
-    while(Me.inBattle) {
-
+    while(Me.battleStatus() == true) {
+      string holldup;
+      cout << "YOU'RE IN BATTTERLLLLL!!!!\n";
+      cin >> holldup;
+      // Menu battleMenu(Me, actorVector[battleIndex]);
     }
-    cavern.clear(CLEAR_COMMAND, true);
+    cavern.clear(CLEAR_COMMAND);
   }
   cin >> holder;
   return 0;
