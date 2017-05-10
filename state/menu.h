@@ -6,42 +6,42 @@
 
 class Menu {
 protected:
-  vector<void(*)()> optionCallbacks;
-  vector<string> options;
-  string borderChar;
-  string borderCharTop;
-  string borderCharBottom;
-  string borderCharLeft;
-  string borderCharRight;
-  string separatorChar;
-  string menuScheme[];
-  string cursor;
+  std::vector<void(*)()> optionCallbacks;
+  std::vector<std::string> options;
+  std::string borderStr;
+  std::string borderStrTop;
+  std::string borderStrBottom;
+  std::string borderStrLeft;
+  std::string borderStrRight;
+  std::string separatorStr;
+  std::string menuScheme[100]; // 100 is an arbitrary maximum for the menu scheme
+  std::string cursor;
 
   int height, width;
-  vector<int> sepYIndices;
+  std::vector<int> sepYIndices;
 public:
 
   Menu();
 
   int getHeight();
   int getWidth();
-  vector<int> getSepYIndices();
+  std::vector<int> getSepYIndices();
 
-  void setCursor(string);
-  void addOption(string);
-  void removeOption(string);
+  void setCursor(std::string);
+  void addOption(std::string);
+  void removeOption(std::string);
   // bools are top, bottom, left, right.  single function to set any value
-  void setBorderChar(string, bool = true, bool = true, bool = true, bool = true);
-  void setSeparatorChar(string);
-  void setMenuScheme(string*);
-  void setHeight(int);
-  void setWidth(int);
+  void setBorderStr(std::string, bool = true, bool = true, bool = true, bool = true);
+  void setSeparatorStr(std::string);
+  void setMenuScheme(std::string*, int, int);
+  //void setHeight(int);
+  //void setWidth(int);
   void addSeparatorYIndex(int);
   void show();
   // accept different types to have movement
   void moveCursor(char);
   void moveCursor(int);
-  void moveCursor(string);
+  void moveCursor(std::string);
   void attachCallback(void(*)());
 };
 

@@ -6,6 +6,12 @@
 #include "map_schemas.h"
 #include "../characters/actor.h"
 #include "../characters/player.h"
+#include "items/item.h"
+#include "items/equipable_item.h"
+#include "items/usable_item.h"
+#include "containers/container.h"
+#include "containers/chest.h"
+#include "containers/bagofholding.h"
 using namespace std;
 
 Map::Map() {
@@ -16,7 +22,7 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
   upper left hand corner.  The list of actorptrs contains player as well
   player actor should always be in position 0
   */
-  static int from = 0; 
+  static int from = 0;
   static bool left = 0;
   static bool right = 0;
 
@@ -104,12 +110,27 @@ void Map::render( int playerDepth, vector<Actor*> &actorptrs ) {
           player->setYPos(DEPTH_3_SOUTHERN_Y_R);
           player->setPrevX(DEPTH_3_SOUTHERN_X_R);
           player->setPrevY(DEPTH_3_SOUTHERN_Y_R);
+        } else if (from == 4) {
+          player->setXPos(DEPTH_3_NORTHERN_X_R);
+          player->setYPos(DEPTH_3_NORTHERN_Y_R);
+          player->setPrevX(DEPTH_3_NORTHERN_X_R);
+          player->setPrevY(DEPTH_3_NORTHERN_Y_R);
         }
       }
       from = 3;
       break;
     }
     case 4: {
+      cout << DEPTH_4_ROOM_NAME << endl;
+      schema = DEPTH_4;
+      schemaLength = DEPTH_4_LENGTH;
+      if (from == 3) {
+        player->setXPos(DEPTH_4_SOUTHERN_X);
+        player->setYPos(DEPTH_4_SOUTHERN_Y);
+        player->setPrevX(DEPTH_4_SOUTHERN_X);
+        player->setPrevY(DEPTH_4_SOUTHERN_Y);
+      }
+      from = 0;
       break;
     }
     default:
@@ -224,7 +245,7 @@ bool Map::wallCollision(Actor *a, string row) {
   enum Cardinal { north = 1, east, south, west };
   int direction = a->getDirection();
   char newPos = row.at(a->getXPos() - 1);
-  if (newPos == '*') {
+  if (!(newPos == ' ')) {
     switch (direction) {
       case north:{
         // player x remains unchanged, but y needs to be set to prev

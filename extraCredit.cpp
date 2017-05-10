@@ -17,6 +17,8 @@ Date: Sometime between the beginning of May and whenever you're reading this
 #include "characters/player.h"
 #include "characters/enemy.h"
 #include "state/map.h"
+#include "state/menu.h"
+#include "text_assets/menu_schemes.h"
 using namespace std;
 
 const string CLEAR_COMMAND = "clear";
