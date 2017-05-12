@@ -6,12 +6,12 @@
 #include "map_schemas.h"
 #include "../characters/actor.h"
 #include "../characters/player.h"
-#include "items/item.h"
-#include "items/equipable_item.h"
-#include "items/usable_item.h"
-#include "containers/container.h"
-#include "containers/chest.h"
-#include "containers/bagofholding.h"
+#include "../items/item.h"
+#include "../items/equipable_item.h"
+#include "../items/usable_item.h"
+#include "../containers/container.h"
+#include "../containers/chest.h"
+#include "../containers/bagofholding.h"
 using namespace std;
 
 Map::Map() {

@@ -14,6 +14,7 @@ public:
   // player specific
   // depth
   Player(int, int, int, int, int, int, int, double, int);
+
   int getDepth();
 
   bool battleStatus();

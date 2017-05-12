@@ -54,7 +54,9 @@ void typeLikeUser(string);
 void wait(int);
 void readFile(string);
 void readString(string);
+void enterContinue();
 bool checkQuit(string);
+
 
 void playIntro();
 void printMenu(const string*, int);
@@ -75,9 +77,22 @@ int main(int argc, char *argv[], char *envp[]) {
   // xpos for depth 0 = 49
   // ypos for depth 0 = 13
   Player Me(49,13,1,10,10,4,1,0.13,0);
+  EquipableItem baseWeapon("BroadSword");
+  EquipableItem baseHead("Rusted Helm");
+  EquipableItem baseTorso("Rusted Armor");
+  EquipableItem baseLegs("Worn Leggings");
+  EquipableItem baseArms("Tattered Bracers");
+  EquipableItem baseHands("Tattered Gloves");
+  Me.equip(baseWeapon);
+  Me.equip(baseHead);
+  Me.equip(baseTorso);
+  Me.equip(baseLegs);
+  Me.equip(baseArms);
+  Me.equip(baseHands);
   vector<Actor*> actorVector;
   actorVector.push_back(&Me);
   Map cavern;
+  Menu MasterMenu;
   cavern.clear(CLEAR_COMMAND);
   cout << "For the best gameplay experience\n"
             "please be sure to set your viewport\n"
@@ -85,8 +100,7 @@ int main(int argc, char *argv[], char *envp[]) {
              "Enjoy!\n"
              "Phil\n\n\n"
              "Enter to continue...";
-  cin.ignore();
-  getline(cin,holder);
+  enterContinue();
   cavern.clear(CLEAR_COMMAND);
   playIntro();
   // main game loop
@@ -177,6 +191,12 @@ void printMenu(const string *menu, int menuSize) {
   for(int i = 0; i < menuSize; i++) {
     cout << i << ": " << menu[i] << endl;
   }
+}
+
+void enterContinue() {
+  string holder;
+  cin.ignore();
+  getline(cin,holder);
 }
 
 void playIntro() {

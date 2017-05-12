@@ -6,9 +6,9 @@
 
 class Item {
 protected:
-  string name;
+  std::string name;
 public:
   // name
-  Item(string);
+  Item(std::string);
 };
 #endif

@@ -1,6 +1,9 @@
 #ifndef ACTOR_H
 #define ACTOR_H
 #include <string>
+#include <vector>
+#include "../items/item.h"
+#include "../items/equipable_item.h"
 using namespace std;
 
 class Actor {
@@ -15,6 +18,14 @@ protected:
   int stats[4];
 
   double evasion_fraction;
+
+  int equipableLimit = 1;
+  std::vector<EquipableItem> weaponSlot;
+  std::vector<EquipableItem> headSlot;
+  std::vector<EquipableItem> torsoSlot;
+  std::vector<EquipableItem> legsSlot;
+  std::vector<EquipableItem> armsSlot;
+  std::vector<EquipableItem> handsSlot;
 public:
   // xpos, ypos, level, health, strength, evasion, attack_type, evasion_fraction
   Actor(int, int, int, int, int, int, int, double);
@@ -47,6 +58,10 @@ public:
 
   void move(char);
   void attack(Actor&);
+
+
+  void equip(EquipableItem&);
+  void unequip();
 };
 
 #endif
